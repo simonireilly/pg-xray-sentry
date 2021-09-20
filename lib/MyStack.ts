@@ -28,6 +28,7 @@ export default class MyStack extends sst.Stack {
         permissions: [[table.dynamodbTable, 'grantReadWriteData']],
         environment: {
           TABLE_NAME: table.tableName,
+          SENTRY_DSN: String(process.env.SENTRY_DSN),
         },
       },
     });

@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { join } from 'path';
 
 // Fetch config from secrets manager
 async function fetchConfiguration(): Promise<Knex.Config> {
@@ -20,13 +21,14 @@ async function fetchConfiguration(): Promise<Knex.Config> {
 }
 
 // Update with your config settings.
-export default async () => {
+export default async (): Promise<Knex.Config> => {
   const configuration = await fetchConfiguration();
 
   return {
     ...configuration,
     migrations: {
       extension: 'ts',
+      directory: 'src/knex/migrations',
     },
   };
 };
