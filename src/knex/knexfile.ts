@@ -54,11 +54,11 @@ export default async (): Promise<Knex.Config> => {
   const configuration = await fetchConfiguration();
 
   return {
-    ...configuration,
     migrations: {
       extension: 'ts',
       directory: 'src/knex/migrations',
     },
+    ...configuration,
     log: console,
   };
 };

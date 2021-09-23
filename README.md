@@ -15,3 +15,13 @@
 
 
 ![Architecture diagram](./diagram.png)
+
+## Todo
+
+Complete hook to transpile migrations before deploying:
+
+```bash
+tsc src/knex/migrations/*.ts --outDir migrations
+```
+
+Or, programmatically from the typescript compiler: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API

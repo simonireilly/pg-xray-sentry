@@ -7,7 +7,6 @@ import { dynamoDB } from '../utils/aws';
 import knex from 'knex';
 import { User } from 'knex/types/tables';
 import fetchCredentials from '../knex/knexfile';
-import * as migrations from '../knex/migrations/20210919172112_create_user_table';
 
 export const controller: APIGatewayProxyHandlerV2 = async () => {
   // XRAY tracing a HTTP request
@@ -27,7 +26,8 @@ export const controller: APIGatewayProxyHandlerV2 = async () => {
   // XRAY tracing a database
   const credentials = await fetchCredentials();
   const db = knex(credentials);
-  await migrations.up(db);
+  await db.migrate.latest();
+  await db.migrate.rollback();
 
   let user: User[] | null = null;
 

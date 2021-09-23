@@ -48,6 +48,9 @@ export default class MyStack extends sst.Stack {
       defaultFunctionProps: {
         bundle: {
           nodeModules: ['@sentry/serverless', 'pg', 'knex'],
+          copyFiles: [
+            { from: 'src/knex/migrations', to: 'src/knex/migrations' },
+          ],
         },
         permissions: [[table.dynamodbTable, 'grantReadWriteData']],
         environment: {
