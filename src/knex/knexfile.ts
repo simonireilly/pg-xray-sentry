@@ -1,9 +1,9 @@
+import { secretsManager } from '../utils/aws';
 import { Knex } from 'knex';
-import { join } from 'path';
 
 // Fetch config from secrets manager
 async function fetchConfiguration(): Promise<Knex.Config> {
-  if (!process.env.LAMBDA_TASK_ROOT) {
+  if (process.env.NODE_ENV === 'test') {
     return {
       client: 'pg',
       connection: {
@@ -15,8 +15,29 @@ async function fetchConfiguration(): Promise<Knex.Config> {
       },
     };
   } else {
+    console.info('Fetching db creds');
+    const { SecretString } = await secretsManager
+      .getSecretValue({
+        SecretId: String(process.env.SECRET_NAME),
+      })
+      .promise();
+    console.info('Have database credentials');
+
+    const credentials = SecretString && JSON.parse(SecretString);
+
     // Fetch from secrets manager
-    return {};
+    return {
+      client: 'pg',
+      connection: {
+        user: credentials.username,
+        password: credentials.password,
+        database: 'postgres',
+        host: credentials.host,
+        port: credentials.port,
+      },
+      acquireConnectionTimeout: 1000,
+      pool: { min: 1, max: 1 },
+    };
   }
 }
 

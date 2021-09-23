@@ -20,5 +20,5 @@
     "typeRoots": ["./node_modules/@types"],
     "incremental": true
   },
-  "include": ["lib", "src", "test/lambda.test.ts"]
+  "include": ["lib", "src", "test/index.test.ts"]
 }

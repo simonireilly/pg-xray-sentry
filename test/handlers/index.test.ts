@@ -3,13 +3,13 @@
  */
 process.env.AWS_REGION = 'local';
 
-import { controller } from '../src/lambda';
+import { controller } from '../../src/handlers';
 
 import { Knex, knex } from 'knex';
-import fetchCredentials from '../src/knex/knexfile';
+import fetchCredentials from '../../src/knex/knexfile';
 import * as nock from 'nock';
 import { clean as databaseCleaner } from 'knex-cleaner';
-import { eventFactory, contextFactory } from '../.jest/models/aws';
+import { eventFactory, contextFactory } from '../../.jest/models/aws';
 
 let db: Knex;
 
