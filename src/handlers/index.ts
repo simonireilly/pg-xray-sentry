@@ -1,10 +1,13 @@
 import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
 import axios from 'axios';
-import knex from 'knex';
-import { User } from 'knex/types/tables';
 import { mapUser } from '../api/mappers/user';
 import { dynamoDB } from '../utils/aws';
+
+// Knex with migrations
+import knex from 'knex';
+import { User } from 'knex/types/tables';
 import fetchCredentials from '../knex/knexfile';
+import * as migrations from '../knex/migrations/20210919172112_create_user_table';
 
 export const controller: APIGatewayProxyHandlerV2 = async () => {
   // XRAY tracing a HTTP request
@@ -24,6 +27,7 @@ export const controller: APIGatewayProxyHandlerV2 = async () => {
   // XRAY tracing a database
   const credentials = await fetchCredentials();
   const db = knex(credentials);
+  await migrations.up(db);
 
   let user: User[] | null = null;
 

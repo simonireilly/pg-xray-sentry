@@ -1,5 +1,11 @@
 import { secretsManager } from '../utils/aws';
 import { Knex } from 'knex';
+import { capturePostgres } from 'aws-xray-sdk';
+
+if (process.env.LAMBDA_TASK_ROOT) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  capturePostgres(require('pg'));
+}
 
 // Fetch config from secrets manager
 async function fetchConfiguration(): Promise<Knex.Config> {
@@ -16,11 +22,13 @@ async function fetchConfiguration(): Promise<Knex.Config> {
     };
   } else {
     console.info('Fetching db creds');
+
     const { SecretString } = await secretsManager
       .getSecretValue({
         SecretId: String(process.env.SECRET_NAME),
       })
       .promise();
+
     console.info('Have database credentials');
 
     const credentials = SecretString && JSON.parse(SecretString);
@@ -51,6 +59,7 @@ export default async (): Promise<Knex.Config> => {
       extension: 'ts',
       directory: 'src/knex/migrations',
     },
+    log: console,
   };
 };
 

@@ -1,6 +1,5 @@
 import * as Sentry from '@sentry/serverless';
 import { controller } from './handlers';
-import { wrapper } from './utils/wrapper';
 
 Sentry.AWSLambda.init({
   dsn: String(process.env.SENTRY_DSN),

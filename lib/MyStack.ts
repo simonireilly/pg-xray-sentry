@@ -38,6 +38,8 @@ export default class MyStack extends sst.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
+    cluster.connections.allowDefaultPortFromAnyIpv4();
+
     // Create a HTTP API that has the following routes
     const api = new sst.Api(this, 'Api', {
       routes: {
