@@ -16,6 +16,13 @@
 
 ![Architecture diagram](./diagram.png)
 
+## Outcome
+
+- Able to capture all errors in sentry without capturing any PII
+- Able to show xray and trace propagation across system via SNS
+
+![Xray Tracing](./xray-vision.png)
+
 ## Todo
 
 Complete hook to transpile migrations before deploying:

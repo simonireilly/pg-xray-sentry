@@ -1,63 +1,27 @@
-import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
-import axios from 'axios';
-import { mapUser } from '../api/mappers/user';
-import { dynamoDB } from '../utils/aws';
+import * as Sentry from '@sentry/serverless';
+import { controller } from './api';
+import { command } from './events';
 
-// Knex with migrations
-import knex from 'knex';
-import { User } from 'knex/types/tables';
-import fetchCredentials from '../knex/knexfile';
+Sentry.AWSLambda.init({
+  dsn: String(process.env.SENTRY_DSN),
+  tracesSampleRate: 1.0,
+  autoSessionTracking: true,
+  logLevel: 3,
+  enabled: true,
+});
 
-export const controller: APIGatewayProxyHandlerV2 = async () => {
-  // XRAY tracing a HTTP request
-  await axios.get('https://google.com');
+export const api = Sentry.AWSLambda.wrapHandler(controller, {
+  captureTimeoutWarning: false,
+  rethrowAfterCapture: true,
+  flushTimeout: 500,
+  timeoutWarningLimit: 3000,
+  callbackWaitsForEmptyEventLoop: false,
+});
 
-  // XRAY AWS SDK Tracing
-  await dynamoDB
-    .putItem({
-      TableName: String(process.env.TABLE_NAME),
-      Item: {
-        pk: { S: (Math.random() + 1).toString(36).substring(7) },
-        sk: { S: (Math.random() + 1).toString(36).substring(7) },
-      },
-    })
-    .promise();
-
-  // XRAY tracing a database
-  const credentials = await fetchCredentials();
-  const db = knex(credentials);
-  await db.migrate.latest();
-  await db.migrate.rollback();
-
-  let user: User[] | null = null;
-
-  try {
-    user = await db('users')
-      .insert({
-        name: 'Simon',
-      })
-      .returning('*');
-  } catch (e) {
-    console.error('Database insert error', e);
-  } finally {
-    db.destroy();
-  }
-
-  if (user === null) {
-    return {
-      statusCode: 422,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: 'Failed to create user',
-      }),
-    };
-  }
-
-  const apiUser = mapUser(user[0]);
-
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(apiUser),
-  };
-};
+export const event = Sentry.AWSLambda.wrapHandler(command, {
+  captureTimeoutWarning: false,
+  rethrowAfterCapture: true,
+  flushTimeout: 500,
+  timeoutWarningLimit: 3000,
+  callbackWaitsForEmptyEventLoop: false,
+});

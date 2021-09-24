@@ -40,10 +40,24 @@ export default class MyStack extends sst.Stack {
 
     cluster.connections.allowDefaultPortFromAnyIpv4();
 
+    // Create an event receiver
+    const topic = new sst.Topic(this, 'Topic', {
+      subscribers: ['src/handlers/index.event'],
+      defaultFunctionProps: {
+        environment: {
+          SENTRY_DSN: String(process.env.SENTRY_DSN),
+          SECRET_NAME: String(cluster.secret?.secretArn),
+        },
+        bundle: {
+          nodeModules: ['@sentry/serverless', 'pg', 'knex'],
+        },
+      },
+    });
+
     // Create a HTTP API that has the following routes
     const api = new sst.Api(this, 'Api', {
       routes: {
-        'GET /': 'src/lambda.handler',
+        'GET /': 'src/handlers/index.api',
       },
       defaultFunctionProps: {
         bundle: {
@@ -52,19 +66,25 @@ export default class MyStack extends sst.Stack {
             { from: 'src/knex/migrations', to: 'src/knex/migrations' },
           ],
         },
-        permissions: [[table.dynamodbTable, 'grantReadWriteData']],
+        permissions: [
+          [table.dynamodbTable, 'grantReadWriteData'],
+          [topic.snsTopic, 'grantPublish'],
+        ],
         environment: {
           TABLE_NAME: table.tableName,
           SECRET_NAME: String(cluster.secret?.secretArn),
           SENTRY_DSN: String(process.env.SENTRY_DSN),
+          TOPIC_ARN: topic.topicArn,
         },
       },
     });
 
     // Allow the lambda to read the RDS connection secret
     if (cluster.secret) {
-      const fn = api.getFunction('GET /');
-      fn && cluster.secret.grantRead(fn);
+      const fn1 = api.getFunction('GET /');
+      const fn2 = topic.subscriberFunctions[0];
+      fn1 && cluster.secret.grantRead(fn1);
+      fn2 && cluster.secret.grantRead(fn2);
     }
 
     // Show the endpoint in the output

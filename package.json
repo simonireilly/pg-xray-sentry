@@ -25,6 +25,7 @@
   "dependencies": {
     "@aws-cdk/aws-ec2": "1.114.0",
     "@aws-cdk/aws-rds": "1.114.0",
+    "@aws-cdk/aws-sns": "1.114.0",
     "@aws-cdk/core": "1.114.0",
     "@sentry/serverless": "^6.12.0",
     "@serverless-stack/cli": "0.43.1",

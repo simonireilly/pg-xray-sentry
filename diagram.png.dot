@@ -66,6 +66,45 @@ digraph "Diagram" {
         width = 1.2,
         height = 1.466,
       ];
+      subgraph "cluster-SubGraph.Topic" {
+        graph [
+          label = "Topic",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#d6d6d6",
+        ];
+        "dev-pg-xray-sentry-my-stack/Topic/Topic" [
+          label = " Topic",
+          fontsize = 12,
+          image = "/home/simon/code/stacks/pg-xray-sentry/node_modules/cdk-dia/icons/aws/Service/Arch_App-Integration/Arch_64/Arch_AWS-Simple-Notification-Service_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+        "dev-pg-xray-sentry-my-stack/Topic/Subscriber_0" [
+          label = " Subscriber_0",
+          fontsize = 12,
+          image = "/home/simon/code/stacks/pg-xray-sentry/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_AWS-Lambda_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+      }
       subgraph "cluster-SubGraph.Api" {
         graph [
           label = "Api",
@@ -124,6 +163,12 @@ digraph "Diagram" {
       }
     }
   }
+  "dev-pg-xray-sentry-my-stack/Topic/Subscriber_0" -> "dev-pg-xray-sentry-my-stack/SharedDevelopmentDatabase" [
+    dir = "both",
+  ];
+  "dev-pg-xray-sentry-my-stack/Topic/Subscriber_0" -> "dev-pg-xray-sentry-my-stack/Topic/Topic" [
+    dir = "both",
+  ];
   "dev-pg-xray-sentry-my-stack/Api/Api" -> "dev-pg-xray-sentry-my-stack/Api/LogGroup" [
     dir = "both",
   ];
@@ -134,6 +179,9 @@ digraph "Diagram" {
     dir = "both",
   ];
   "dev-pg-xray-sentry-my-stack/Api/Lambda_GET_--" -> "dev-pg-xray-sentry-my-stack/SharedDevelopmentDatabase" [
+    dir = "both",
+  ];
+  "dev-pg-xray-sentry-my-stack/Api/Lambda_GET_--" -> "dev-pg-xray-sentry-my-stack/Topic/Topic" [
     dir = "both",
   ];
   "dev-pg-xray-sentry-my-stack/Api/Route_GET_--" -> "dev-pg-xray-sentry-my-stack/Api/Api" [
