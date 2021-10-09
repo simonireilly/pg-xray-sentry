@@ -53,6 +53,32 @@ digraph "Diagram" {
         width = 2,
         height = 2.4819999999999998,
       ];
+      "dev-pg-xray-sentry-my-stack/database" [
+        label = " database",
+        fontsize = 12,
+        image = "/home/simon/code/stacks/pg-xray-sentry/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_AWS-Lambda_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "dev-pg-xray-sentry-my-stack/CreateDatabaseCustomResource" [
+        label = " CloudFormation\nCustomResource",
+        fontsize = 12,
+        image = "/home/simon/code/stacks/pg-xray-sentry/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_AWS-CloudFormation_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.682,
+      ];
       "dev-pg-xray-sentry-my-stack/DynamoDbTableName/Table" [
         label = " Table",
         fontsize = 12,
@@ -163,6 +189,9 @@ digraph "Diagram" {
       }
     }
   }
+  "dev-pg-xray-sentry-my-stack/database" -> "dev-pg-xray-sentry-my-stack/SharedDevelopmentDatabase" [
+    dir = "both",
+  ];
   "dev-pg-xray-sentry-my-stack/Topic/Subscriber_0" -> "dev-pg-xray-sentry-my-stack/SharedDevelopmentDatabase" [
     dir = "both",
   ];

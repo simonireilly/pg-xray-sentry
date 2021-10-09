@@ -40,6 +40,31 @@ export default class MyStack extends sst.Stack {
 
     cluster.connections.allowDefaultPortFromAnyIpv4();
 
+    const lambdaCreateDatabase = new sst.Function(this, 'database', {
+      handler: 'lib/custom-resource/database/index.handler',
+      bundle: {
+        nodeModules: ['@sentry/serverless', 'pg', 'knex'],
+        copyFiles: [{ from: 'src/knex/migrations', to: 'src/knex/migrations' }],
+      },
+      environment: {
+        SECRET_NAME: String(cluster.secret?.secretArn),
+      },
+    });
+
+    cluster.secret?.grantRead(lambdaCreateDatabase);
+
+    const CustomResourceCreateDatabase = new cdk.CustomResource(
+      this,
+      'CreateDatabaseCustomResource',
+      {
+        resourceType: 'Custom::ProvisionDatabaseAndMigrate',
+        serviceToken: lambdaCreateDatabase.functionArn,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      }
+    );
+
+    CustomResourceCreateDatabase.node.addDependency(cluster);
+
     // Create an event receiver
     const topic = new sst.Topic(this, 'Topic', {
       subscribers: ['src/handlers/index.event'],

@@ -3,7 +3,7 @@
  */
 process.env.AWS_REGION = 'local';
 
-import { controller } from '../../src/handlers';
+import { api } from '../../src/handlers';
 
 import { Knex, knex } from 'knex';
 import fetchCredentials from '../../src/knex/knexfile';
@@ -45,7 +45,7 @@ describe('controller test', () => {
     nock('https://dynamodb.local.amazonaws.com').post('/').reply(201);
 
     // Use fixtures for invoking integration
-    const response = await controller(
+    const response = await api(
       eventFactory.build(),
       contextFactory.build(),
       () => {}

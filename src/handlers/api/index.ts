@@ -26,7 +26,7 @@ export const controller: APIGatewayProxyHandlerV2 = async () => {
   // XRAY tracing a database
   const credentials = await fetchCredentials();
   const db = knex(credentials);
-  // await db.migrate.latest();
+  await db.migrate.latest();
   // await db.migrate.rollback();
 
   let user: User[] | null = null;
